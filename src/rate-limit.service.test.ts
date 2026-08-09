@@ -38,8 +38,10 @@ describe('RateLimitService', () => {
 				}),
 			).resolves.toBeUndefined()
 
-			// 60 000 ms in, 60 s out: CacheOptions.ttl is seconds.
+			// 60 000 ms in, 60 s out: CacheOptions.ttl is seconds. And the window
+			// is measured from the first hit, so rejected calls cannot extend it.
 			expect(cacheService.incr).toHaveBeenCalledWith('rate-limit:user:123', {
+				expiry: 'on-create',
 				ttl: 60,
 			})
 		})
