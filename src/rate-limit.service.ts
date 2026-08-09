@@ -40,8 +40,11 @@ export class RateLimitService {
 	 */
 	async consume(key: string, options: RateLimitOptions): Promise<void> {
 		const rateLimitKey = `rate-limit:${key}`
+		// `window` is milliseconds; `CacheOptions.ttl` is seconds. Passing one for
+		// the other stretched the window 1000x — a 60 s limit reset after 16 hours.
+		// Rounded up, so a sub-second window never floors to a key with no expiry.
 		const current = await this.cacheService.incr(rateLimitKey, {
-			ttl: options.window,
+			ttl: Math.ceil(options.window / 1000),
 		})
 
 		if (current > options.limit) {

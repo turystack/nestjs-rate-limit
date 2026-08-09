@@ -38,8 +38,9 @@ describe('RateLimitService', () => {
 				}),
 			).resolves.toBeUndefined()
 
+			// 60 000 ms in, 60 s out: CacheOptions.ttl is seconds.
 			expect(cacheService.incr).toHaveBeenCalledWith('rate-limit:user:123', {
-				ttl: 60_000,
+				ttl: 60,
 			})
 		})
 
